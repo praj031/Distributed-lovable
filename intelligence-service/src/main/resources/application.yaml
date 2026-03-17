@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: intelligence-service
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+debug: false
+
+logging:
+  level:
+    org.springframework.ai:
+      chat.client: DEBUG

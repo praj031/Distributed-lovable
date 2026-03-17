@@ -1,0 +1,16 @@
+logging:
+  level:
+    org.springframework.cloud.gatway: DEBUG
+    reactor.netty.http.client: DEBUG
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+debug: false
+#Here we are connecting to a config server on port 8888
+#By doing this we are saying that, either use the URL or end-point
+
+#TO see the configuration from GIT
+#  Link -- http://localhost:8888/api-gateway/default

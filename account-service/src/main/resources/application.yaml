@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: account-service
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+debug: false
+
+#TO check the imported configuration you can check it on.
+ #   http://localhost:8888/account-service/default

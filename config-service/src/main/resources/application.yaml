@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: config-service
+
+
+  cloud:
+    config.server.git:
+      uri: https://github.com/praj031/Distributed-lovable-Config.git
+      username: praj031
+      password: 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
+      default-label: master
+
+server.port: 8888
+
+#Opens the health and configuration end-points in the configuration server
+management:
+  endpoint:
+    web:
+      exposure:
+        include: health,info
+  health:
+    config:
+      enable: false
+
+---
+#Basically, we have described that what all configuration we want when the profile is kubernetes
+#The config inside this file/section will only load when you run the app with profile k8s
+spring:
+  config:
+    activate:
+      on-profile: k8s
+
+  cloud:
+    discovery:
+      enabled: false
+    config.server.git:
+      uri: https://github.com/praj031/Distributed-lovable-Config.git
+      username: ${GIT_USERNAME}
+      password: ${GIT_PASSWORD}
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+#Also, we will disable the eureka client for profile k8s

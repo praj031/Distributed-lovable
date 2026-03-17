@@ -1,0 +1,155 @@
+                    ┌─────────────┐
+                    │ Coordinator │
+                    └──────┬──────┘
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+        ▼                  ▼                  ▼
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│Payment Service│  │Booking Service│  │ Indigo Flight │
+└───────┬───────┘  └───────┬───────┘  └───────┬───────┘
+        │                  │                  │
+        │ booking_failed   │                  │
+        │─────────────────►│                  │
+        │                  │                  │
+        │ payment_confirmed│                  │
+        │─────────────────►│                  │
+        │                  │ seat_booking_fail│
+        │                  │─────────────────►│
+        │                  │                  │
+        │                  │ booking_confirmed│
+        │                  │─────────────────►│
+        │                  │                  │
+        │                  │                  │────┐
+        │                  │                  │    │ seat_booked
+        │                  │                  │◄───┘
+        │                  │                  │
+        │                  │                  │────┐
+        │                  │                  │    │ seat_booking_fail
+        │                  │                  │◄───┘
+        │                  │                  │
+        │                  │                  ▼
+        │                  │         ┌─────────────────┐
+        │                  │         │Notification Serv│
+        │                  │         └─────────────────┘
+        │                  │
+        ▼                  ▼
+
+
+ Distributed Transactions
+ • 2 Phase commit  --> Where you have a coordinator who listens to the events and tell each service.
+ • Saga : Choreography  --> where all the service are loosely coupled and each of them send events and each service consumes the events
+ • Saga : Orchestrator  --> Same as 2 phase commit, Where you have a coordinator who listens to the events and tell each service.
+
+
+SAGA : distributed transactions across different services so that if anything fails somewhere we can perform some compensating action to undo the event.
+
+2 types of implementing SAGA -> Orchestration = where one service acts as the brain, Choreography =
+                where there is no single coordinator, services react to events. writing this to re-inforce my learnings nothing else. Sorry if this is spamming!
+
+
+  For **BFSI (Banking, Financial Services, Insurance)** and **Supply Chain**, here's the comparison:
+
+---
+
+## Quick Verdict
+
+| Use Case | Winner | Why |
+|----------|--------|-----|
+| **BFSI Core Banking** | **RabbitMQ** | Complex routing, guaranteed delivery, transactional consistency |
+| **BFSI Analytics/Fraud** | **Kafka** | High throughput, event sourcing, audit trails |
+| **Supply Chain Tracking** | **Kafka** | Massive scale, event log, replay capability |
+| **Supply Chain Orders/Inventory** | **RabbitMQ** | Complex workflows, RPC patterns, priority queues |
+
+---
+
+## Detailed Comparison
+
+### **RabbitMQ** → BFSI Winner for Operations
+
+| Strength | BFSI Use Case |
+|----------|---------------|
+| Complex routing (topic/headers/direct) | Payment routing by currency, region, priority |
+| Guaranteed delivery (publisher confirms) | SWIFT messages, settlement systems |
+| Transactions (TX) | ACID compliance for fund transfers |
+| Priority queues | VIP customer transactions |
+| Request/Reply (RPC) | Real-time balance checks, fraud validation |
+| DLQ + retry policies | Failed payment reconciliation |
+
+**BFSI Examples:**
+- Payment processing (SWIFT, SEPA)
+- Loan approval workflows
+- Insurance claim routing
+- Core banking integrations
+
+---
+
+### **Kafka** → Supply Chain Winner + BFSI Analytics
+
+| Strength | Supply Chain Use Case |
+|----------|----------------------|
+| Massive throughput (1M+ msg/sec) | IoT sensor streams, shipment tracking |
+| Event log (immutable) | Full audit trail, compliance |
+| Replay capability | Reprocess failed batches, backtesting |
+| Stream processing (ksqlDB/Flink) | Real-time inventory optimization |
+| Long retention | Historical trend analysis |
+| Partition scaling | Global supplier networks |
+
+**Supply Chain Examples:**
+- Real-time shipment tracking (GPS/RFID)
+- Inventory event sourcing
+- Supplier integration hub
+- Predictive logistics analytics
+
+---
+
+## Hybrid Architecture (Recommended)
+
+```
+┌─────────────────┐     ┌─────────────────┐
+│   Client Apps   │────►│   API Gateway   │
+└─────────────────┘     └────────┬────────┘
+                                 │
+              ┌──────────────────┼──────────────────┐
+              ▼                  ▼                  ▼
+       ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+       │  RabbitMQ   │    │    Kafka    │    │   Kafka     │
+       │  (Orders)   │    │  (Events)   │    │ (Analytics) │
+       └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+              │                  │                  │
+              ▼                  ▼                  ▼
+       ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+       │Order Service│    │Event Store  │    │Data Lake    │
+       │Payment Svc  │    │Audit Log    │    │Fraud ML     │
+       └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+---
+
+## Decision Matrix
+
+| Requirement | RabbitMQ | Kafka |
+|-------------|----------|-------|
+| Message routing complexity | ✅ | ❌ |
+| Throughput > 100K msg/s | ❌ | ✅ |
+| Event sourcing/replay | ❌ | ✅ |
+| Transactional messaging | ✅ | ⚠️ |
+| Complex retry/DLQ | ✅ | ⚠️ |
+| Stream processing | ❌ | ✅ |
+| Message priority | ✅ | ❌ |
+| Long-term retention | ❌ | ✅ |
+| Request/Reply pattern | ✅ | ❌ |
+
+---
+
+## Final Recommendation
+
+| Scenario | Choice |
+|----------|--------|
+| **Traditional BFSI** (payments, core banking) | **RabbitMQ** |
+| **Modern BFSI** (fintech, real-time fraud, ledgers) | **Kafka** |
+| **Supply Chain IoT/Tracking** | **Kafka** |
+| **Supply Chain Order Management** | **RabbitMQ** |
+| **Enterprise-wide** | **Both** (RabbitMQ for ops, Kafka for events) |
+
+**BFSI + Supply Chain together?** → Start with **Kafka** for the data backbone, add **RabbitMQ** for complex transactional workflows.
