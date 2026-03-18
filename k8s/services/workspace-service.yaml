@@ -54,7 +54,7 @@ spec:
       serviceAccountName: workspace-service-account
       containers:
         - name: workspace-service
-          image: praj031/distributed-lovable-workspace-service
+          image: praj031/distributed-lovable-workspace-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 9020
