@@ -1,0 +1,40 @@
+### This doc consists of the list of the script executed while configuring the k8s configuration ##
+
+
+#To run for creation of package and docker image via build and push it to docker.io
+./mvnw clean package -DskipTests
+
+
+#To create app-secret:
+kubectl create secret generic app-secrets --from-env-file=.env -n lovable-previews
+secret/app-secrets created
+kubectl create secret generic app-secrets --from-env-file=.env -n lovable-core
+secret/app-secrets created
+
+
+#To set manually the image in the service commands :
+kubectl set image deployment/config-service config-service=praj031/distributed-lovable-config-service:latest -n lovable-core
+kubectl set image deployment.apps/api-gateway api-gateway=praj031/distributed-lovable-api-gateway:latest -n lovable-core
+kubectl set image deployment.apps/account-service account-service=praj031/distributed-lovable-account-service:latest -n lovable-core
+kubectl set image deployment.apps/intelligence-service intelligence-service=praj031/distributed-lovable-intelligence-service:latest -n lovable-core
+
+
+#To see the logs :
+kubectl logs {Service Name} -n {Name-space name}
+
+
+#To get the list of pods in a name-space:
+kubectl get pods -n {Name-space name}
+
+
+#To create a new service or pods:
+kubectl apply -f {File path}
+
+
+#To get description of the pods created:
+kubectl describe pods {pod name} -n {Name-space name}
+
+
+#To delete any service:
+kubectl delete deployment workspace-service -n lovable-core
+
