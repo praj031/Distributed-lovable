@@ -1,6 +1,8 @@
 # Distributed-lovable
 Distributed-lovable
 
+Config Repository : https://github.com/praj031/Distributed-lovable-Config.git
+
 End Point testing - Via Postman : https://pritishraj-official-8728611.postman.co/workspace/Pritish-raj's-Workspace~c12d3ed7-600a-4343-8276-d789eb238c9b/collection/50390415-7c5c7545-b76a-4bd6-8051-705012722945?action=share&source=copy-link&creator=50390415
 
 Docker Hub Image Repository : https://hub.docker.com/repositories/praj031
