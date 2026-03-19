@@ -25,7 +25,24 @@ kubectl logs {Service Name} -n {Name-space name}
 
 #To get the list of pods in a name-space:
 kubectl get pods -n {Name-space name}
-
+############################
+praj@Pritish-Raj K8s % kubectl get pods -n lovable-core
+NAME                                   READY   STATUS    RESTARTS   AGE
+account-service-fcfd4d7b4-vhvm5        1/1     Running   0          7h5m
+api-gateway-79f568d85d-x7grt           1/1     Running   0          7h23m
+config-service-767cf64479-j6nwm        1/1     Running   0          8h
+intelligence-service-6cf55d44f-r9v89   1/1     Running   0          5h48m
+kafka-0                                1/1     Running   0          8h
+minio-0                                1/1     Running   0          8h
+pgvector-0                             1/1     Running   0          8h
+redis-0                                1/1     Running   0          8h
+workspace-service-7b6bd84df-7p9pw      1/1     Running   0          3h7m
+praj@Pritish-Raj K8s % kubectl get pods -n lovable-previews
+NAME                           READY   STATUS    RESTARTS   AGE
+runner-pool-798f84cc9d-jmcdt   2/2     Running   0          48s
+runner-pool-798f84cc9d-wt4jm   2/2     Running   0          47s
+praj@Pritish-Raj K8s % 
+############################
 
 #To create a new service or pods:
 kubectl apply -f {File path}
@@ -37,4 +54,74 @@ kubectl describe pods {pod name} -n {Name-space name}
 
 #To delete any service:
 kubectl delete deployment workspace-service -n lovable-core
+
+
+#To run data-base connection:
+kubectl exec -it {Database used(to be find from the list of pods)} -n {Name-space name} -- psql -U postgres
+
+
+#To do port forwading:
+kubectl port-forward pod/<pod-name> <local-port>:<container-port> -n <namespace>
+kubectl port-forward pod/pgvector-0 5432:5432 -n lovable-core
+
+As long as this port forwading will run, it will show case the data 
+Handling connection for 7777
+Handling connection for 7777
+Handling connection for 7777
+Handling connection for 7777
+Handling connection for 7777
+
+
+
+#Install Nginix:
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controllerv1.8.2/deploy/static/provider/cloud/deploy.yaml
+
+praj@Pritish-Raj K8s % kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controllerv1.8.2/deploy/static/provider/cloud/deploy.yaml
+error: unable to read URL "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controllerv1.8.2/deploy/static/provider/cloud/deploy.yaml", server reported 404 Not Found, status code=404
+praj@Pritish-Raj K8s % kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+namespace/ingress-nginx created
+serviceaccount/ingress-nginx created
+serviceaccount/ingress-nginx-admission created
+role.rbac.authorization.k8s.io/ingress-nginx created
+role.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+configmap/ingress-nginx-controller created
+service/ingress-nginx-controller created
+service/ingress-nginx-controller-admission created
+deployment.apps/ingress-nginx-controller created
+Warning: autopilot-default-resources-mutator:Autopilot updated Job ingress-nginx/ingress-nginx-admission-create: defaulted unspecified 'cpu' resource for containers [create] (see http://g.co/gke/autopilot-defaults).
+job.batch/ingress-nginx-admission-create created
+Warning: autopilot-default-resources-mutator:Autopilot updated Job ingress-nginx/ingress-nginx-admission-patch: defaulted unspecified 'cpu' resource for containers [patch] (see http://g.co/gke/autopilot-defaults).
+job.batch/ingress-nginx-admission-patch created
+ingressclass.networking.k8s.io/nginx created
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+praj@Pritish-Raj K8s % kubectl get pods -n ingress-nginx
+NAME                                       READY   STATUS              RESTARTS   AGE
+ingress-nginx-admission-create-q5f69       0/1     Pending             0          9s
+ingress-nginx-admission-patch-52ds7        0/1     Pending             0          8s
+ingress-nginx-controller-f8df5f644-dvg6l   0/1     ContainerCreating   0          10s
+
+
+
+#To get the public IP address: 
+kubectl get svc ingress-nginx-controller -n ingress-nginx -w
+
+praj@Pritish-Raj K8s % kubectl get svc ingress-nginx-controller -n ingress-nginx -w
+NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
+ingress-nginx-controller   LoadBalancer   34.118.228.5   34.100.218.124   80:31765/TCP,443:30502/TCP   2m57s
+
+
+#Website creation part: 
+{IP address : 34.100.218.124}
+Time stamp = 01:25:00 --> Module 17. 
+
+
+
+
+
 
