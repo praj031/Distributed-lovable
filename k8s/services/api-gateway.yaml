@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: anuj55149/lovable-api-gateway:latest
+          image: praj031/distributed-lovable-api-gateway:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

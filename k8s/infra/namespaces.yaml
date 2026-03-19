@@ -3,15 +3,15 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: lovable-core
-
+  name: lovable-core #To save all the core services and statefulsets in one namespace for better organization
+  
 ---
 # to create a separate ns for previews
 
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: lovable-previews
+  name: lovable-previews #This namespace will be used to create and manage all the preview environments for different workspaces, keeping them isolated from the core services and other namespaces
 
 ---
 # configmap for shared config values across services

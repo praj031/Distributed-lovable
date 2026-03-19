@@ -17,13 +17,13 @@ spec:
     spec:
       containers:
         - name: config-service
-          image: anuj55149/lovable-config-service:latest
+          image: praj031/distributed-lovable-config-service:latest #GKE has caching issues, using latest tag to ensure it always pulls the new image
           imagePullPolicy: Always
           ports:
             - containerPort: 8888
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: k8s
+              value: k8s #Tells all config clients to use k8s profile only when they fetch config from config server, this way we can have different configs for local and k8s environment
             - name: GIT_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -45,10 +45,10 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8888
-            initialDelaySeconds: 90
-            periodSeconds: 15
-            timeoutSeconds: 5
-            failureThreshold: 3
+            initialDelaySeconds: 90 #Time delay before the first probe is initiated, giving the config server enough time to start up and be ready to serve requests
+            periodSeconds: 15 #Actuator health check
+            timeoutSeconds: 5 #Time to wait for the health check response before considering it a failure
+            failureThreshold: 3 #Number of consecutive failures before marking the pod as unhealthy and stopping traffic to it
 ---
 apiVersion: v1
 kind: Service

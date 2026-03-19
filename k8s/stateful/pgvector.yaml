@@ -95,7 +95,7 @@ spec:
           volumeMounts:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
-            - name: initdb
+            - name: initdb   # Mount the initdb script from the ConfigMap to the container, This signifies that the script will be executed during the initialization of the PostgreSQL container, allowing it to set up the databases and users as defined in the script.
               mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: initdb
