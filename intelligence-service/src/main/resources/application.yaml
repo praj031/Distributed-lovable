@@ -9,3 +9,10 @@ logging:
   level:
     org.springframework.ai:
       chat.client: DEBUG
+
+eureka:
+  client:
+    register-with-eureka: true   # register this service
+    fetch-registry: true         # fetch other services
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
