@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "minio")
 @Data
-public class StorageConfig {
+public class sStorageConfig {
 
     private String url;
     private String accessKey;
